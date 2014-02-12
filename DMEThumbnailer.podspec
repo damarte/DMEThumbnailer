@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version  = '1.0'
   s.license  = 'BSD' 
   s.summary  = 'DMEThumnailer is a class to generate thumbnails for local images, videos and PDFs'
-  s.homepage = 'https://github.com/damarte/DMEBottomView'
+  s.homepage = 'https://github.com/damarte/DMEThumnailer'
   s.author   = { 'David Martínez' => 'damarte86@gmail.com' }
   s.source   = {
     :git => 'https://github.com/damarte/DMEThumnailer.git',
