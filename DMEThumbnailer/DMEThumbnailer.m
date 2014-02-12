@@ -205,7 +205,7 @@
 {
     NSFileManager *filemgr = [NSFileManager defaultManager];
     
-    NSString *urlDirectorio = [NSString stringWithFormat:@"%@/%@", pathCache(), @"Thumbs"];
+    NSString *urlDirectorio = [NSString stringWithFormat:@"%@/%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs"];
     
     if([filemgr changeCurrentDirectoryPath: urlDirectorio] == NO)
     {
@@ -257,10 +257,10 @@
 -(NSString *)pathFromName:(NSString *)aName andPrefix:(NSString *)aPrefix
 {
     if([aPrefix isEqualToString:@""]){
-        return [NSString stringWithFormat:@"%@/%@/%@", pathCache(), @"Thumbs", aName];
+        return [NSString stringWithFormat:@"%@/%@/%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs", aName];
     }
     else{
-        return [NSString stringWithFormat:@"%@/%@/%@-%@", pathCache(), @"Thumbs", aPrefix, aName];
+        return [NSString stringWithFormat:@"%@/%@/%@-%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs", aPrefix, aName];
     }
 }
 
