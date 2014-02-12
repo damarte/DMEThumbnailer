@@ -2,6 +2,8 @@
 //  DMEThumbnailer.h
 //
 
+#import <AVFoundation/AVFoundation.h>
+
 @interface DMEThumbnailer : NSObject
 
 //Sizes of the thumbnails
