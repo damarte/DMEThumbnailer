@@ -1,7 +1,7 @@
-DMEThumnailer
+DMEThumbnailer
 =============
 
-DMEThumnailer is a thumbnail generator for images, MP4 videos and PDF Documents.
+DMEThumbnailer is a thumbnail generator for images, MP4 videos and PDF Documents.
 
 ##Instalation
 
@@ -9,18 +9,18 @@ Cocoapods, by podfile
 
 ```
 platform :ios, '6.0'
-pod "DMEThumnailer"
+pod "DMEThumbnailer"
 ```
 
-or copy the contents of /DMEThumnailer into your project.
+or copy the contents of /DMEThumbnailer into your project.
 
 ##How do I use DMEThumnailer
 
 Include the following four files in your project:
 
 ```
-DMEThumnailer.h
-DMEThumnailer.m
+DMEThumbnailer.h
+DMEThumbnailer.m
 ```
 
 DMEThumbnailer is a singleton class. For create two types of thumbnails "small" (120px x 80px) and "large" (240px x 160px) you can do the next:
