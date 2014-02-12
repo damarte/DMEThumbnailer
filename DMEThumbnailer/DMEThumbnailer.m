@@ -2,15 +2,15 @@
 //  DMEThumnailer.m
 //
 
-#import "DMEThumnailer.h"
+#import "DMEThumbnailer.h"
 
-@implementation DMEThumnailer
+@implementation DMEThumbnailer
 
 +(instancetype)sharedInstance {
-    static DMEThumnailer *sharedInstance = nil;
+    static DMEThumbnailer *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[DMEThumnailer alloc] init];
+        sharedInstance = [[DMEThumbnailer alloc] init];
     });
     
     return sharedInstance;

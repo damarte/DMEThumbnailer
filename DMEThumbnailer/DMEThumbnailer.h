@@ -1,8 +1,8 @@
 //
-//  DMEThumnailer.h
+//  DMEThumbnailer.h
 //
 
-@interface DMEThumnailer : NSObject
+@interface DMEThumbnailer : NSObject
 
 //Sizes of the thumbnails
 @property (strong, nonatomic) NSDictionary *sizes;
