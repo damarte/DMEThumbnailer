@@ -17,83 +17,114 @@
 }
 
 #pragma mark Generic generate thumbnails
--(void)generateImageThumbnails:(NSString *)aUrl;
+-(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
 {
+    __block NSMutableDictionary *thumbs = [NSMutableDictionary dictionaryWithCapacity:self.sizes.count];
     for (NSString* prefix in self.sizes) {
         CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
-        [self generateImageThumbnail:aUrl widthSize:size widthPrefix:prefix];
+        [self generateImageThumbnail:aPath widthSize:size widthPrefix:prefix completionBlock:^(UIImage *thumb) {
+            [thumbs setObject:thumb forKey:prefix];
+        }];
+    }
+    
+    if(block){
+        block(thumbs);
     }
 }
 
--(void)generateVideoThumbnails:(NSString *)aUrl;
+-(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
 {
+    // Create a dispatch group
+    dispatch_group_t group = dispatch_group_create();
+    
+    __block NSMutableDictionary *thumbs = [NSMutableDictionary dictionaryWithCapacity:self.sizes.count];
+    for (NSString* prefix in self.sizes) {
+        // Enter the group for each request we create
+        dispatch_group_enter(group);
+        
+        CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
+        [self generateVideoThumbnail:aPath widthSize:size atSecond:1 widthPrefix:prefix completionBlock:^(UIImage *thumb) {
+            [thumbs setObject:thumb forKey:prefix];
+            
+            // Leave the group as soon as the request succeeded
+            dispatch_group_leave(group);
+        }];
+    }
+    
+    // Here we wait for all the requests to finish
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        if(block){
+            block(thumbs);
+        }
+    });
+}
+
+-(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+{
+    __block NSMutableDictionary *thumbs = [NSMutableDictionary dictionaryWithCapacity:self.sizes.count];
     for (NSString* prefix in self.sizes) {
         CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
-        [self generateVideoThumbnail:aUrl widthSize:size atSecond:1 widthPrefix:prefix response:nil];
+        [self generatePDFThumbnail:aPath widthSize:size forPage:1 widthPrefix:prefix completionBlock:^(UIImage *thumb) {
+            [thumbs setObject:thumb forKey:prefix];
+        }];
+    }
+    
+    if(block){
+        block(thumbs);
     }
 }
 
--(void)generatePDFThumbnails:(NSString *)aUrl
+-(void)removeThumbnails:(NSString *)aPath
 {
     for (NSString* prefix in self.sizes) {
-        CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
-        [self generatePDFThumbnail:aUrl widthSize:size forPage:1 widthPrefix:prefix];
-    }
-}
-
--(void)removeThumbnails:(NSString *)url
-{
-    for (NSString* prefix in self.sizes) {
-        [self removeThumb:url withPrefix:prefix];
+        [self removeThumb:aPath withPrefix:prefix];
     }
 }
 
 #pragma mark Specified generate thumbnails
 
--(UIImage *)generateImageThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize
+-(void)generateImageThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block
 {
-    return [self generateImageThumbnail:aUrl widthSize:aSize widthPrefix:@""];
+    [self generateImageThumbnail:aPath widthSize:aSize widthPrefix:@"" completionBlock:block];
 }
 
--(UIImage *)generateImageThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize widthPrefix:(NSString *)aPrefix
+-(void)generateImageThumbnail:(NSString *)aPath widthSize:(CGSize)aSize widthPrefix:(NSString *)aPrefix completionBlock:(GenerateThumbCompletionBlock)block
 {
     UIImage *thumbnail = nil;
-    if([self thumbExistWithName:[aUrl lastPathComponent] andPrefix:aPrefix]){
-        //Cargamos el thumb
-        thumbnail= [self readThumb:[aUrl lastPathComponent] withPrefix:aPrefix];
+    if([self thumbExistForPath:aPath andPrefix:aPrefix]){
+        thumbnail= [self readThumb:[aPath lastPathComponent] withPrefix:aPrefix];
     }
     else{
         aSize = [self adjustSizeRetina:aSize];
         
-        UIImage *originalImage = [UIImage imageWithContentsOfFile:aUrl];
+        UIImage *originalImage = [UIImage imageWithContentsOfFile:aPath];
         thumbnail = [self imageByScalingAndCropping:originalImage forSize:aSize];
         
-        //Guardamos el thumb
-        [self saveThumb:thumbnail withName:[aUrl lastPathComponent] withPrefix:aPrefix];
+        [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
     }
     
-    return thumbnail;
+    if(block){
+        block(thumbnail);
+    }
 }
 
-//Genera un thumbnail a partir de un video mp4
--(void)generateVideoThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize response:(AVAssetImageGeneratorCompletionHandler)aResponse
+-(void)generateVideoThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block
 {
-    [self generateVideoThumbnail:aUrl widthSize:aSize atSecond:1 widthPrefix:@"" response:aResponse];
+    [self generateVideoThumbnail:aPath widthSize:aSize atSecond:1 widthPrefix:@"" completionBlock:block];
 }
 
--(void)generateVideoThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize atSecond:(NSInteger)aSecond widthPrefix:(NSString *)aPrefix response:(AVAssetImageGeneratorCompletionHandler) aResponse
+-(void)generateVideoThumbnail:(NSString *)aPath widthSize:(CGSize)aSize atSecond:(NSInteger)aSecond widthPrefix:(NSString *)aPrefix completionBlock:(GenerateThumbCompletionBlock)block
 {
-    if([self thumbExistWithName:[aUrl lastPathComponent] andPrefix:aPrefix]){
-        UIImage *thumbnail = [self readThumb:[aUrl lastPathComponent] withPrefix:aPrefix];
-        if(aResponse){
-            aResponse(CMTimeMake(0, 0), [thumbnail CGImage], CMTimeMake(0, 0), AVAssetImageGeneratorSucceeded, nil);
+    if([self thumbExistForPath:aPath andPrefix:aPrefix]){
+        UIImage *thumbnail = [self readThumb:aPath withPrefix:aPrefix];
+        if(block){
+            block(thumbnail);
         }
     }
     else{
         aSize = [self adjustSizeRetina:aSize];
         
-        //Generamos el thumbnail asincronamente
-        AVURLAsset *asset=[[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:aUrl] options:nil];
+        AVURLAsset *asset=[[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:aPath] options:nil];
         AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
         generator.appliesPreferredTrackTransform=TRUE;
         CMTime thumbTime = CMTimeMakeWithSeconds(aSecond,1);
@@ -117,41 +148,40 @@
             UIGraphicsBeginImageContext(backgroundImage.size);
             [backgroundImage drawInRect:CGRectMake(0, 0, backgroundImage.size.width, backgroundImage.size.height)];
             [watermarkImage drawInRect:CGRectMake((backgroundImage.size.width - watermarkSize.width) / 2, (backgroundImage.size.height - watermarkSize.height) / 2, watermarkSize.width, watermarkSize.height)];
-            UIImage *finalImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIImage *thumbnail = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
             
-            //Guardamos el thumb
-            [self saveThumb:finalImage withName:[aUrl lastPathComponent] withPrefix:aPrefix];
+            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
             
-            if(aResponse){
-                aResponse(requestedTime, image, actualTime, result, error);
+            if(block){
+                block(thumbnail);
             }
         }];
     }
 }
 
 //Genera un thumbnail de una pagina de un PDF
--(UIImage *)generatePDFThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize
+-(void)generatePDFThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block
 {
-    return [self generatePDFThumbnail:aUrl widthSize:aSize forPage:1 widthPrefix:@""];
+    [self generatePDFThumbnail:aPath widthSize:aSize forPage:1 widthPrefix:@"" completionBlock:block];
 }
 
--(UIImage *)generatePDFThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize forPage:(NSInteger)aPage widthPrefix:(NSString *)aPrefix
+-(void)generatePDFThumbnail:(NSString *)aPath widthSize:(CGSize)aSize forPage:(NSInteger)aPage widthPrefix:(NSString *)aPrefix completionBlock:(GenerateThumbCompletionBlock)block
 {
     NSFileManager *gestorArchivos = [NSFileManager defaultManager];
     UIImage *thumbnail = nil;
     
-    if([self thumbExistWithName:[aUrl lastPathComponent] andPrefix:aPrefix]){
+    if([self thumbExistForPath:aPath andPrefix:aPrefix]){
         //Cargamos el thumb
-        thumbnail= [self readThumb:[aUrl lastPathComponent] withPrefix:aPrefix];
+        thumbnail= [self readThumb:aPath withPrefix:aPrefix];
     }
     else{
         //Comprobamos si existe el pdf
-        if ([gestorArchivos fileExistsAtPath: aUrl]) {
+        if ([gestorArchivos fileExistsAtPath: aPath]) {
             aSize = [self adjustSizeRetina:aSize];
             
             //Ruta al pdf
-            CGPDFDocumentRef pdf = CGPDFDocumentCreateWithURL((__bridge CFURLRef)[NSURL fileURLWithPath:aUrl]);
+            CGPDFDocumentRef pdf = CGPDFDocumentCreateWithURL((__bridge CFURLRef)[NSURL fileURLWithPath:aPath]);
             
             CGPDFPageRef page = CGPDFDocumentGetPage(pdf, aPage);
             CGRect aRect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
@@ -178,30 +208,33 @@
             thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
 
             //Guardamos el thumb
-            [self saveThumb:thumbnail withName:[aUrl lastPathComponent] withPrefix:aPrefix];
+            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
         }
     }
-    return thumbnail;
+    
+    if(block){
+        block(thumbnail);
+    }
 }
 
 #pragma mark - File Management
 
--(UIImage *)readThumb:(NSString *)aName
+-(UIImage *)readThumb:(NSString *)aPath
 {
-    return [self readThumb:aName withPrefix:@""];
+    return [self readThumb:aPath withPrefix:@""];
 }
 
--(UIImage *)readThumb:(NSString *)aName withPrefix:(NSString *)aPrefix
+-(UIImage *)readThumb:(NSString *)aPath withPrefix:(NSString *)aPrefix
 {
-    return [UIImage imageWithContentsOfFile:[self pathFromName:aName andPrefix:aPrefix]];
+    return [UIImage imageWithContentsOfFile:[self thumbPathFromFilePath:aPath andPrefix:aPrefix]];
 }
 
--(BOOL)saveThumb:(UIImage *)aImage withName:(NSString *)aName
+-(BOOL)saveThumb:(UIImage *)aImage inPath:(NSString *)aPath
 {
-    return [self saveThumb:aImage withName:aName withPrefix:@""];
+    return [self saveThumb:aImage inPath:aPath withPrefix:@""];
 }
 
--(BOOL)saveThumb:(UIImage *)aImage withName:(NSString *)aName withPrefix:(NSString *)aPrefix
+-(BOOL)saveThumb:(UIImage *)aImage inPath:(NSString *)aPath withPrefix:(NSString *)aPrefix
 {
     NSFileManager *filemgr = [NSFileManager defaultManager];
     
@@ -214,7 +247,7 @@
     
     if ([filemgr changeCurrentDirectoryPath: urlDirectorio] == YES)
     {
-        [UIImagePNGRepresentation(aImage) writeToFile:[self pathFromName:aName andPrefix:aPrefix] atomically:YES];
+        [UIImagePNGRepresentation(aImage) writeToFile:[self thumbPathFromFilePath:aPath andPrefix:aPrefix] atomically:YES];
         return YES;
     }
     else{
@@ -227,12 +260,12 @@
     return [self removeThumb:aName withPrefix:@""];
 }
 
--(BOOL)removeThumb:(NSString *)aName withPrefix:(NSString *)aPrefix
+-(BOOL)removeThumb:(NSString *)aPath withPrefix:(NSString *)aPrefix
 {
-    if([self thumbExistWithName:aName andPrefix:aPrefix]){
+    if([self thumbExistForPath:aPath andPrefix:aPrefix]){
         NSFileManager *filemgr = [NSFileManager defaultManager];
         NSError *error;
-        [filemgr removeItemAtPath:[self pathFromName:aName andPrefix:aPrefix] error:&error];
+        [filemgr removeItemAtPath:[self thumbPathFromFilePath:aPath andPrefix:aPrefix] error:&error];
         if (error.code != NSFileNoSuchFileError) {
             return NO;
         }
@@ -243,24 +276,24 @@
     }
 }
 
--(BOOL)thumbExistWithName:(NSString *)aName
+-(BOOL)thumbExistForPath:(NSString *)aPath
 {
-    return [self thumbExistWithName:aName andPrefix:@""];
+    return [self thumbExistForPath:aPath andPrefix:@""];
 }
 
--(BOOL)thumbExistWithName:(NSString *)aName andPrefix:(NSString *)aPrefix
+-(BOOL)thumbExistForPath:(NSString *)aPath andPrefix:(NSString *)aPrefix
 {
     NSFileManager *filemgr = [NSFileManager defaultManager];
-    return [filemgr fileExistsAtPath:[self pathFromName:aName andPrefix:aPrefix]];
+    return [filemgr fileExistsAtPath:[self thumbPathFromFilePath:aPath andPrefix:aPrefix]];
 }
 
--(NSString *)pathFromName:(NSString *)aName andPrefix:(NSString *)aPrefix
+-(NSString *)thumbPathFromFilePath:(NSString *)aPath andPrefix:(NSString *)aPrefix
 {
     if([aPrefix isEqualToString:@""]){
-        return [NSString stringWithFormat:@"%@/%@/%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs", aName];
+        return [NSString stringWithFormat:@"%@/%@/%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs", [aPath lastPathComponent]];
     }
     else{
-        return [NSString stringWithFormat:@"%@/%@/%@-%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs", aPrefix, aName];
+        return [NSString stringWithFormat:@"%@/%@/%@-%@", [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0], @"Thumbs", aPrefix, [aPath lastPathComponent]];
     }
 }
 
@@ -294,13 +327,13 @@
         CGFloat heightFactor = targetHeight / height;
         
         if (widthFactor > heightFactor)
-            scaleFactor = widthFactor; // scale to fit height
+            scaleFactor = widthFactor; //Scale to fit height
         else
-            scaleFactor = heightFactor; // scale to fit width
+            scaleFactor = heightFactor; //Scale to fit width
         scaledWidth  = width * scaleFactor;
         scaledHeight = height * scaleFactor;
         
-        // center the image
+        //Center the image
         if (widthFactor > heightFactor) {
             thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5;
         }
@@ -309,7 +342,7 @@
         }
     }
     
-    UIGraphicsBeginImageContext(aSize); // this will crop
+    UIGraphicsBeginImageContext(aSize); //This will crop
     
     CGRect thumbnailRect = CGRectZero;
     thumbnailRect.origin = thumbnailPoint;
@@ -323,7 +356,7 @@
         NSLog(@"could not scale image");
     }
     
-    //pop the context to get back to the default
+    //Pop the context to get back to the default
     UIGraphicsEndImageContext();
     return newImage;
 }

@@ -4,6 +4,9 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+typedef void (^GenerateThumbCompletionBlock)(UIImage *thumb);
+typedef void (^GenerateThumbsCompletionBlock)(NSDictionary *thumbs);
+
 @interface DMEThumbnailer : NSObject
 
 //Sizes of the thumbnails
@@ -11,25 +14,26 @@
 
 +(instancetype)sharedInstance;
 
--(void)generateImageThumbnails:(NSString *)aUrl;
--(void)generateVideoThumbnails:(NSString *)aUrl;
--(void)generatePDFThumbnails:(NSString *)aUrl;
--(void)removeThumbnails:(NSString *)aUrl;
+-(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block;
+-(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block;
+-(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block;
+-(void)removeThumbnails:(NSString *)aPath;
 
 //Generate thumbnail from image
--(UIImage *)generateImageThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize;
+-(void)generateImageThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block;
 
-//Generate thumbnail from mp4 video
--(void)generateVideoThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize response:(AVAssetImageGeneratorCompletionHandler)aResponse;
+//Generate thumbnail from MP4 video
+-(void)generateVideoThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block;
 
 //Generate thumbnail from PDF
--(UIImage *)generatePDFThumbnail:(NSString *)aUrl widthSize:(CGSize)aSize;
+-(void)generatePDFThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block;
 
 //Thumbnail manipulation
--(UIImage *)readThumb:(NSString *)aName;
--(UIImage *)readThumb:(NSString *)aName withPrefix:(NSString *)aPrefix;
--(BOOL)saveThumb:(UIImage *)aImage withName:(NSString *)aName;
--(BOOL)removeThumb:(NSString *)aName;
--(BOOL)thumbExistWithName:(NSString *)aName;
+-(UIImage *)readThumb:(NSString *)aPath;
+-(UIImage *)readThumb:(NSString *)aPath withPrefix:(NSString *)aPrefix;
+-(BOOL)saveThumb:(UIImage *)aImage inPath:(NSString *)aPath;
+-(BOOL)removeThumb:(NSString *)aPath;
+-(BOOL)thumbExistForPath:(NSString *)aPath;
+-(BOOL)thumbExistForPath:(NSString *)aPath andPrefix:(NSString *)aPrefix;
 
 @end
