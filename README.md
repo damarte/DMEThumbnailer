@@ -49,19 +49,21 @@ Generated thumbnails store in cache directory into Thumbs subfolder.
 You can generate all the thumbnails defined in the last step with these methods:
 
 ```
--(void)generateImageThumbnails:(NSString *)aPath
+-(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
 ```
 Generate an image thumbnails from file path.
 
 ```
--(void)generateVideoThumbnails:(NSString *)aPath
+-(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
 ```
 Generate an video thumbnails from file path.
 
 ```
--(void)generatePDFThumbnails:(NSString *)aPath
+-(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
 ```
 Generate an PDF thumbnails from file path.
+
+Three methods completion block return a NSDictionary with UIImages and prefix keys.
 
 ##Showing specified thumbnail
 
@@ -88,6 +90,8 @@ You can also create individual thumbnail for file with these methods:
 
 -(void)generatePDFThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block
 ```
+
+Three methods completion block return a UIImage.
 
 To recover an individual thumbnail you can use this method:
 
