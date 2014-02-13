@@ -12,27 +12,23 @@ platform :ios, '6.0'
 pod "DMEThumbnailer"
 ```
 
-or copy the contents of /DMEThumbnailer into your project.
+or copy the contents of `/DMEThumbnailer` into your project.
 
 ##Demo App
 
-Navigate to /DMEThumbnailerExample and open the proyect file.
+Navigate to `/DMEThumbnailerExample` and open the proyect file.
 
 ##How do I use DMEThumnailer
 
-Include the following four files in your project:
+Import `DMEThumbnailer.h`
 
-```
-DMEThumbnailer.h
-DMEThumbnailer.m
-```
 DMEThumbnailer required AVFoundation Framework, include it in your proyect and import it.
 
 ```
 #import <AVFoundation/AVFoundation.h>
 ```
 
-DMEThumbnailer is a singleton class. For create two types of thumbnails "small" (120px x 80px) and "large" (240px x 160px) you can do the next:
+DMEThumbnailer is a singleton class. To create two types of thumbnails "small" (120px x 80px) and "large" (240px x 160px) you can do:
 
 ```
 NSDictionary *sizes = @{
@@ -42,28 +38,24 @@ NSDictionary *sizes = @{
 [DMEThumbnailer sharedInstance].sizes = sizes;
 ```
 
-Generated thumbnails store in cache directory into Thumbs subfolder.
+This generates thumbnails stored in the cache directory in the Thumbs subfolder.
 
 ##Generating thumbnails
 
 You can generate all the thumbnails defined in the last step with these methods:
 
 ```
+// Generate thumbnails from an image:
 -(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
-```
-Generate an image thumbnails from file path.
 
-```
+// Generate thumbnails from a video:
 -(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
-```
-Generate an video thumbnails from file path.
 
-```
+// Generate thumbnails from a pdf
 -(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
 ```
-Generate an PDF thumbnails from file path.
 
-Three methods completion block return a NSDictionary with UIImages and prefix keys.
+Three methods completion block return a NSDictionary with UIImages.
 
 ##Showing specified thumbnail
 
@@ -93,7 +85,7 @@ You can also create individual thumbnail for file with these methods:
 
 Three methods completion block return a UIImage.
 
-To recover an individual thumbnail you can use this method:
+Then to recover an individual thumbnail:
 
 ```
 -(UIImage *)readThumb:(NSString *)aPath
@@ -101,16 +93,8 @@ To recover an individual thumbnail you can use this method:
 
 ##Removing thumbnails
 
-You can remove thumbnails with this methods:
 
 ```
 -(void)removeThumbnails:(NSString *)aPath
-```
-
-Remove all thumbnails types for a file.
-
-```
 -(BOOL)removeThumb:(NSString *)aPath;
 ```
-
-Remove individual thumbnail for a file.
