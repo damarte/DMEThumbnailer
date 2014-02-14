@@ -17,13 +17,16 @@
 }
 
 #pragma mark Generic generate thumbnails
--(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+-(void)generateImageThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block
 {
     __block NSMutableDictionary *thumbs = [NSMutableDictionary dictionaryWithCapacity:self.sizes.count];
     for (NSString* prefix in self.sizes) {
         CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
-        [self generateImageThumbnail:aPath widthSize:size widthPrefix:prefix completionBlock:^(UIImage *thumb) {
-            [thumbs setObject:thumb forKey:prefix];
+        [self generateImageThumbnail:aPath widthSize:size widthPrefix:prefix completionBlock:^(UIImage **thumb) {
+            if(afterBlock){
+                afterBlock(&thumb);
+            }
+            [thumbs setObject:*thumb forKey:prefix];
         }];
     }
     
@@ -32,7 +35,7 @@
     }
 }
 
--(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+-(void)generateVideoThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block
 {
     // Create a dispatch group
     dispatch_group_t group = dispatch_group_create();
@@ -43,8 +46,11 @@
         dispatch_group_enter(group);
         
         CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
-        [self generateVideoThumbnail:aPath widthSize:size atSecond:1 widthPrefix:prefix completionBlock:^(UIImage *thumb) {
-            [thumbs setObject:thumb forKey:prefix];
+        [self generateVideoThumbnail:aPath widthSize:size atSecond:1 widthPrefix:prefix completionBlock:^(UIImage **thumb) {
+            if(afterBlock){
+                afterBlock(thumb);
+            }
+            [thumbs setObject:*thumb forKey:prefix];
             
             // Leave the group as soon as the request succeeded
             dispatch_group_leave(group);
@@ -59,13 +65,16 @@
     });
 }
 
--(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+-(void)generatePDFThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block
 {
     __block NSMutableDictionary *thumbs = [NSMutableDictionary dictionaryWithCapacity:self.sizes.count];
     for (NSString* prefix in self.sizes) {
         CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
-        [self generatePDFThumbnail:aPath widthSize:size forPage:1 widthPrefix:prefix completionBlock:^(UIImage *thumb) {
-            [thumbs setObject:thumb forKey:prefix];
+        [self generatePDFThumbnail:aPath widthSize:size forPage:1 widthPrefix:prefix completionBlock:^(UIImage **thumb) {
+            if(afterBlock){
+                afterBlock(thumb);
+            }
+            [thumbs setObject:*thumb forKey:prefix];
         }];
     }
     
@@ -93,6 +102,9 @@
     UIImage *thumbnail = nil;
     if([self thumbExistForPath:aPath andPrefix:aPrefix]){
         thumbnail= [self readThumb:[aPath lastPathComponent] withPrefix:aPrefix];
+        if(block){
+            block(&thumbnail);
+        }
     }
     else{
         aSize = [self adjustSizeRetina:aSize];
@@ -100,11 +112,11 @@
         UIImage *originalImage = [UIImage imageWithContentsOfFile:aPath];
         thumbnail = [self imageByScalingAndCropping:originalImage forSize:aSize];
         
+        if(block){
+            block(&thumbnail);
+        }
+        
         [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
-    }
-    
-    if(block){
-        block(thumbnail);
     }
 }
 
@@ -118,7 +130,7 @@
     if([self thumbExistForPath:aPath andPrefix:aPrefix]){
         UIImage *thumbnail = [self readThumb:aPath withPrefix:aPrefix];
         if(block){
-            block(thumbnail);
+            block(&thumbnail);
         }
     }
     else{
@@ -139,23 +151,15 @@
         CGSize maxSize = CGSizeMake(max, max);
         generator.maximumSize = maxSize;
         [generator generateCGImagesAsynchronouslyForTimes:[NSArray arrayWithObject:[NSValue valueWithCMTime:thumbTime]] completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error) {
-
-            //Overlay play
-            UIImage *backgroundImage = [self imageByScalingAndCropping:[UIImage imageWithCGImage:image] forSize:aSize];
-            UIImage *watermarkImage = [UIImage imageNamed:@"VideoWatermark"];
-            CGSize watermarkSize = watermarkImage.size;
-            watermarkSize = [self adjustSizeRetina:watermarkSize];
-            UIGraphicsBeginImageContext(backgroundImage.size);
-            [backgroundImage drawInRect:CGRectMake(0, 0, backgroundImage.size.width, backgroundImage.size.height)];
-            [watermarkImage drawInRect:CGRectMake((backgroundImage.size.width - watermarkSize.width) / 2, (backgroundImage.size.height - watermarkSize.height) / 2, watermarkSize.width, watermarkSize.height)];
-            UIImage *thumbnail = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
+            UIImage *thumbnail = [UIImage imageWithCGImage:image];
             
-            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
+            thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
             
             if(block){
-                block(thumbnail);
+                block(&thumbnail);
             }
+            
+            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
         }];
     }
 }
@@ -174,6 +178,9 @@
     if([self thumbExistForPath:aPath andPrefix:aPrefix]){
         //Cargamos el thumb
         thumbnail= [self readThumb:aPath withPrefix:aPrefix];
+        if(block){
+            block(&thumbnail);
+        }
     }
     else{
         //Comprobamos si existe el pdf
@@ -206,14 +213,14 @@
             CGPDFDocumentRelease(pdf);
             
             thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
+            
+            if(block){
+                block(&thumbnail);
+            }
 
             //Guardamos el thumb
             [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
         }
-    }
-    
-    if(block){
-        block(thumbnail);
     }
 }
 
@@ -353,7 +360,7 @@
     
     newImage = UIGraphicsGetImageFromCurrentImageContext();
     if (newImage == nil) {
-        NSLog(@"could not scale image");
+        NSLog(@"Could not scale image");
     }
     
     //Pop the context to get back to the default

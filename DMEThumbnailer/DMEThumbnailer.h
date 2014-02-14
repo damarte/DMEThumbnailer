@@ -4,7 +4,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-typedef void (^GenerateThumbCompletionBlock)(UIImage *thumb);
+typedef void (^GenerateThumbCompletionBlock)(UIImage **thumb);
 typedef void (^GenerateThumbsCompletionBlock)(NSDictionary *thumbs);
 
 @interface DMEThumbnailer : NSObject
@@ -14,9 +14,9 @@ typedef void (^GenerateThumbsCompletionBlock)(NSDictionary *thumbs);
 
 +(instancetype)sharedInstance;
 
--(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block;
--(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block;
--(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block;
+-(void)generateImageThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block;
+-(void)generateVideoThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block;
+-(void)generatePDFThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block;
 -(void)removeThumbnails:(NSString *)aPath;
 
 //Generate thumbnail from image
@@ -35,5 +35,6 @@ typedef void (^GenerateThumbsCompletionBlock)(NSDictionary *thumbs);
 -(BOOL)removeThumb:(NSString *)aPath;
 -(BOOL)thumbExistForPath:(NSString *)aPath;
 -(BOOL)thumbExistForPath:(NSString *)aPath andPrefix:(NSString *)aPrefix;
+-(CGSize)adjustSizeRetina:(CGSize)aSize;
 
 @end

@@ -46,14 +46,16 @@ You can generate all the thumbnails defined in the last step with these methods:
 
 ```
 // Generate thumbnails from an image:
--(void)generateImageThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+-(void)generateImageThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block
 
 // Generate thumbnails from a video:
--(void)generateVideoThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+-(void)generateVideoThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block
 
 // Generate thumbnails from a pdf
--(void)generatePDFThumbnails:(NSString *)aPath completionBlock:(GenerateThumbsCompletionBlock)block
+-(void)generatePDFThumbnails:(NSString *)aPath afterGenerate:(GenerateThumbCompletionBlock)afterBlock completionBlock:(GenerateThumbsCompletionBlock)block
 ```
+
+The block afterGenerate will execute when individual thumbnails generate but before save then.
 
 Three methods completion block return a NSDictionary with UIImages.
 
@@ -83,7 +85,7 @@ You can also create individual thumbnail for file with these methods:
 -(void)generatePDFThumbnail:(NSString *)aPath widthSize:(CGSize)aSize completionBlock:(GenerateThumbCompletionBlock)block
 ```
 
-Three methods completion block return a UIImage.
+Three methods completion block return a UIImage pointer for you can modify it before save.
 
 Then to recover an individual thumbnail:
 
