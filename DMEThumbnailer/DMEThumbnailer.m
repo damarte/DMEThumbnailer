@@ -107,16 +107,18 @@
         }
     }
     else{
-        aSize = [self adjustSizeRetina:aSize];
-        
-        UIImage *originalImage = [UIImage imageWithContentsOfFile:aPath];
-        thumbnail = [self imageByScalingAndCropping:originalImage forSize:aSize];
-        
-        if(block){
-            block(&thumbnail);
+        NSData *data = [NSData dataWithContentsOfFile:aPath];
+        if(data){
+            aSize = [self adjustSizeRetina:aSize];
+
+            thumbnail = [self imageByScalingAndCropping:[UIImage imageWithData:data] forSize:aSize];
+            
+            if(block){
+                block(&thumbnail);
+            }
+            
+            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
         }
-        
-        [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
     }
 }
 
@@ -137,30 +139,47 @@
         aSize = [self adjustSizeRetina:aSize];
         
         AVURLAsset *asset=[[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:aPath] options:nil];
-        AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-        generator.appliesPreferredTrackTransform=TRUE;
-        CMTime thumbTime = CMTimeMakeWithSeconds(aSecond,1);
-        
-        CGFloat max;
-        if(aSize.width > aSize.height){
-            max = aSize.width;
-        }
-        else{
-            max = aSize.height;
-        }
-        CGSize maxSize = CGSizeMake(max, max);
-        generator.maximumSize = maxSize;
-        [generator generateCGImagesAsynchronouslyForTimes:[NSArray arrayWithObject:[NSValue valueWithCMTime:thumbTime]] completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error) {
-            UIImage *thumbnail = [UIImage imageWithCGImage:image];
-            
-            thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
-            
-            if(block){
-                block(&thumbnail);
+        [asset loadValuesAsynchronouslyForKeys:[NSArray keyWithObject:@"duration"] completionHandler: ^{
+            NSError *error = nil;
+            CMTime thumbTime;
+            switch ([asset statusOfValueForKey:@"duration": error:&error]) {
+                case AVKeyValueStatusLoaded:
+                    // duration is now known, so we can fetch it without blocking
+                    CMTime duration = [asset duration];
+                    thumbTime = CMTimeMakeWithSeconds(CMTimeGetSeconds(duration)/2,1);
+                    break;
+                default:
+                    thumbTime = CMTimeMakeWithSeconds(aSecond,1);
+                    break;
             }
             
-            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
+            AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+            generator.appliesPreferredTrackTransform=TRUE;
+            CMTime thumbTime = CMTimeMakeWithSeconds(aSecond,1);
+            
+            CGFloat max;
+            if(aSize.width > aSize.height){
+                max = aSize.width;
+            }
+            else{
+                max = aSize.height;
+            }
+            CGSize maxSize = CGSizeMake(max, max);
+            generator.maximumSize = maxSize;
+            [generator generateCGImagesAsynchronouslyForTimes:[NSArray arrayWithObject:[NSValue valueWithCMTime:thumbTime]] completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error) {
+                UIImage *thumbnail = [UIImage imageWithCGImage:image];
+                
+                thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
+                
+                if(block){
+                    block(&thumbnail);
+                }
+                
+                [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
+            }];
         }];
+        
+        
     }
 }
 
