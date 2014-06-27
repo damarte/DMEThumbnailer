@@ -1,25 +1,25 @@
 //
-//  DMEVideoViewController.m
+//  DMEImageViewController.m
 //  DMEThumbnailerExample
 //
 //  Created by David Getapp on 13/02/14.
 //  Copyright (c) 2014 David. All rights reserved.
 //
 
-#import "DMEVideoViewController.h"
+#import "DMEImageViewController.h"
 #import "DMEThumbnailer.h"
 
-@interface DMEVideoViewController ()
+@interface DMEImageViewController ()
 
 @end
 
-@implementation DMEVideoViewController
+@implementation DMEImageViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"video" ofType:@"mp4"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"];
 	
     if([[DMEThumbnailer sharedInstance] thumbExistForPath:path andPrefix:@"small"] && [[DMEThumbnailer sharedInstance] thumbExistForPath:path andPrefix:@"large"]){
         self.imgSmall.image = [[DMEThumbnailer sharedInstance] readThumb:path withPrefix:@"small"];
@@ -32,9 +32,11 @@
 }
 
 - (IBAction)generate:(id)sender {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"video" ofType:@"mp4"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"];
     
-    [[DMEThumbnailer sharedInstance] generateVideoThumbnails:path completionBlock:^(NSDictionary *thumbs) {
+    [[DMEThumbnailer sharedInstance] generateImageThumbnails:path afterGenerate:^(UIImage *__autoreleasing *thumb) {
+        
+    } completionBlock:^(NSDictionary *thumbs) {
         for (NSString *prefix in thumbs) {
             if([prefix isEqualToString:@"small"]){
                 self.imgSmall.image = [thumbs objectForKey:prefix];
@@ -51,7 +53,7 @@
 }
 
 - (IBAction)remove:(id)sender {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"video" ofType:@"mp4"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"];
     
     self.imgLarge.image = nil;
     self.imgSmall.image = nil;

@@ -24,7 +24,7 @@
         CGSize size = [[self.sizes objectForKey:prefix] CGSizeValue];
         [self generateImageThumbnail:aPath widthSize:size widthPrefix:prefix completionBlock:^(UIImage **thumb) {
             if(afterBlock){
-                afterBlock(&thumb);
+                afterBlock(thumb);
             }
             [thumbs setObject:*thumb forKey:prefix];
         }];
@@ -139,13 +139,13 @@
         aSize = [self adjustSizeRetina:aSize];
         
         AVURLAsset *asset=[[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:aPath] options:nil];
-        [asset loadValuesAsynchronouslyForKeys:[NSArray keyWithObject:@"duration"] completionHandler: ^{
+        [asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"duration"] completionHandler: ^{
             NSError *error = nil;
             CMTime thumbTime;
-            switch ([asset statusOfValueForKey:@"duration": error:&error]) {
+            CMTime duration;
+            switch ([asset statusOfValueForKey:@"duration" error:&error]) {
                 case AVKeyValueStatusLoaded:
-                    // duration is now known, so we can fetch it without blocking
-                    CMTime duration = [asset duration];
+                    duration = [asset duration];
                     thumbTime = CMTimeMakeWithSeconds(CMTimeGetSeconds(duration)/2,1);
                     break;
                 default:
@@ -155,7 +155,6 @@
             
             AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
             generator.appliesPreferredTrackTransform=TRUE;
-            CMTime thumbTime = CMTimeMakeWithSeconds(aSecond,1);
             
             CGFloat max;
             if(aSize.width > aSize.height){
@@ -178,8 +177,6 @@
                 [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
             }];
         }];
-        
-        
     }
 }
 

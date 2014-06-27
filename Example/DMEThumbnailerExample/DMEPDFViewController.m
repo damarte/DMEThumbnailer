@@ -1,25 +1,25 @@
 //
-//  DMEImageViewController.m
+//  DMEPDFViewController.m
 //  DMEThumbnailerExample
 //
 //  Created by David Getapp on 13/02/14.
 //  Copyright (c) 2014 David. All rights reserved.
 //
 
-#import "DMEImageViewController.h"
+#import "DMEPDFViewController.h"
 #import "DMEThumbnailer.h"
 
-@interface DMEImageViewController ()
+@interface DMEPDFViewController ()
 
 @end
 
-@implementation DMEImageViewController
+@implementation DMEPDFViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"pdf" ofType:@"pdf"];
 	
     if([[DMEThumbnailer sharedInstance] thumbExistForPath:path andPrefix:@"small"] && [[DMEThumbnailer sharedInstance] thumbExistForPath:path andPrefix:@"large"]){
         self.imgSmall.image = [[DMEThumbnailer sharedInstance] readThumb:path withPrefix:@"small"];
@@ -32,9 +32,11 @@
 }
 
 - (IBAction)generate:(id)sender {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"pdf" ofType:@"pdf"];
     
-    [[DMEThumbnailer sharedInstance] generateImageThumbnails:path completionBlock:^(NSDictionary *thumbs) {
+    [[DMEThumbnailer sharedInstance] generatePDFThumbnails:path afterGenerate:^(UIImage *__autoreleasing *thumb) {
+        
+    } completionBlock:^(NSDictionary *thumbs) {
         for (NSString *prefix in thumbs) {
             if([prefix isEqualToString:@"small"]){
                 self.imgSmall.image = [thumbs objectForKey:prefix];
@@ -51,7 +53,7 @@
 }
 
 - (IBAction)remove:(id)sender {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"image" ofType:@"jpg"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"pdf" ofType:@"pdf"];
     
     self.imgLarge.image = nil;
     self.imgSmall.image = nil;

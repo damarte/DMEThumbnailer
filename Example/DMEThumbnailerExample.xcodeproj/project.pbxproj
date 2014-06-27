@@ -20,7 +20,6 @@
 		27BB82FC18ACBEAF0026BE38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27BB82DE18ACBEAF0026BE38 /* UIKit.framework */; };
 		27BB830418ACBEAF0026BE38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 27BB830218ACBEAF0026BE38 /* InfoPlist.strings */; };
 		27BB830618ACBEAF0026BE38 /* DMEThumbnailerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BB830518ACBEAF0026BE38 /* DMEThumbnailerExampleTests.m */; };
-		27BB831118ACBEDA0026BE38 /* DMEThumbnailer.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BB831018ACBEDA0026BE38 /* DMEThumbnailer.m */; };
 		27BB831318ACBEE20026BE38 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27BB831218ACBEE20026BE38 /* AVFoundation.framework */; };
 		27BB831618ACC0FA0026BE38 /* DMEImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BB831518ACC0FA0026BE38 /* DMEImageViewController.m */; };
 		27BB831A18ACC3470026BE38 /* pdf.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 27BB831718ACC3470026BE38 /* pdf.pdf */; };
@@ -28,6 +27,7 @@
 		27BB831C18ACC3470026BE38 /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 27BB831918ACC3470026BE38 /* video.mp4 */; };
 		27BB831F18ACC86E0026BE38 /* DMEVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BB831E18ACC86E0026BE38 /* DMEVideoViewController.m */; };
 		27BB832218ACCC710026BE38 /* DMEPDFViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27BB832118ACCC710026BE38 /* DMEPDFViewController.m */; };
+		4A30D5291D0E4302ADA101ED /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 516D5A6F0A8B4B5DBF71B39E /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,8 +58,6 @@
 		27BB830118ACBEAF0026BE38 /* DMEThumbnailerExampleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DMEThumbnailerExampleTests-Info.plist"; sourceTree = "<group>"; };
 		27BB830318ACBEAF0026BE38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		27BB830518ACBEAF0026BE38 /* DMEThumbnailerExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DMEThumbnailerExampleTests.m; sourceTree = "<group>"; };
-		27BB830F18ACBEDA0026BE38 /* DMEThumbnailer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DMEThumbnailer.h; path = ../../DMEThumbnailer/DMEThumbnailer.h; sourceTree = "<group>"; };
-		27BB831018ACBEDA0026BE38 /* DMEThumbnailer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DMEThumbnailer.m; path = ../../DMEThumbnailer/DMEThumbnailer.m; sourceTree = "<group>"; };
 		27BB831218ACBEE20026BE38 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		27BB831418ACC0FA0026BE38 /* DMEImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMEImageViewController.h; sourceTree = "<group>"; };
 		27BB831518ACC0FA0026BE38 /* DMEImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMEImageViewController.m; sourceTree = "<group>"; };
@@ -70,6 +68,8 @@
 		27BB831E18ACC86E0026BE38 /* DMEVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMEVideoViewController.m; sourceTree = "<group>"; };
 		27BB832018ACCC710026BE38 /* DMEPDFViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMEPDFViewController.h; sourceTree = "<group>"; };
 		27BB832118ACCC710026BE38 /* DMEPDFViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMEPDFViewController.m; sourceTree = "<group>"; };
+		516D5A6F0A8B4B5DBF71B39E /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F31DA74F76E74889B0BF2EA9 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +81,7 @@
 				27BB82DD18ACBEAF0026BE38 /* CoreGraphics.framework in Frameworks */,
 				27BB82DF18ACBEAF0026BE38 /* UIKit.framework in Frameworks */,
 				27BB82DB18ACBEAF0026BE38 /* Foundation.framework in Frameworks */,
+				4A30D5291D0E4302ADA101ED /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +105,7 @@
 				27BB82FF18ACBEAF0026BE38 /* DMEThumbnailerExampleTests */,
 				27BB82D918ACBEAF0026BE38 /* Frameworks */,
 				27BB82D818ACBEAF0026BE38 /* Products */,
+				F31DA74F76E74889B0BF2EA9 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -124,6 +126,7 @@
 				27BB82DC18ACBEAF0026BE38 /* CoreGraphics.framework */,
 				27BB82DE18ACBEAF0026BE38 /* UIKit.framework */,
 				27BB82F918ACBEAF0026BE38 /* XCTest.framework */,
+				516D5A6F0A8B4B5DBF71B39E /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -134,8 +137,6 @@
 				27BB831718ACC3470026BE38 /* pdf.pdf */,
 				27BB831818ACC3470026BE38 /* image.jpg */,
 				27BB831918ACC3470026BE38 /* video.mp4 */,
-				27BB830F18ACBEDA0026BE38 /* DMEThumbnailer.h */,
-				27BB831018ACBEDA0026BE38 /* DMEThumbnailer.m */,
 				27BB82E918ACBEAF0026BE38 /* DMEAppDelegate.h */,
 				27BB82EA18ACBEAF0026BE38 /* DMEAppDelegate.m */,
 				27BB831418ACC0FA0026BE38 /* DMEImageViewController.h */,
@@ -187,9 +188,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 27BB830918ACBEAF0026BE38 /* Build configuration list for PBXNativeTarget "DMEThumbnailerExample" */;
 			buildPhases = (
+				758E03060BAB43BBA1295E3D /* Check Pods Manifest.lock */,
 				27BB82D318ACBEAF0026BE38 /* Sources */,
 				27BB82D418ACBEAF0026BE38 /* Frameworks */,
 				27BB82D518ACBEAF0026BE38 /* Resources */,
+				5BE14C48FCBA4BFEA053905D /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -225,7 +228,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = DME;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = David;
 				TargetAttributes = {
 					27BB82F718ACBEAF0026BE38 = {
@@ -276,13 +279,45 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5BE14C48FCBA4BFEA053905D /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		758E03060BAB43BBA1295E3D /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		27BB82D318ACBEAF0026BE38 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				27BB832218ACCC710026BE38 /* DMEPDFViewController.m in Sources */,
-				27BB831118ACBEDA0026BE38 /* DMEThumbnailer.m in Sources */,
 				27BB82E718ACBEAF0026BE38 /* main.m in Sources */,
 				27BB82EB18ACBEAF0026BE38 /* DMEAppDelegate.m in Sources */,
 				27BB831F18ACC86E0026BE38 /* DMEVideoViewController.m in Sources */,
@@ -340,7 +375,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -379,7 +413,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -410,6 +443,7 @@
 		};
 		27BB830A18ACBEAF0026BE38 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F31DA74F76E74889B0BF2EA9 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -423,6 +457,7 @@
 		};
 		27BB830B18ACBEAF0026BE38 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F31DA74F76E74889B0BF2EA9 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -437,7 +472,6 @@
 		27BB830D18ACBEAF0026BE38 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/DMEThumbnailerExample.app/DMEThumbnailerExample";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -460,7 +494,6 @@
 		27BB830E18ACBEAF0026BE38 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/DMEThumbnailerExample.app/DMEThumbnailerExample";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -495,6 +528,7 @@
 				27BB830B18ACBEAF0026BE38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		27BB830C18ACBEAF0026BE38 /* Build configuration list for PBXNativeTarget "DMEThumbnailerExampleTests" */ = {
 			isa = XCConfigurationList;
@@ -503,6 +537,7 @@
 				27BB830E18ACBEAF0026BE38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,0 +1,14 @@
+PODS:
+  - DMEThumbnailer (1.3)
+
+DEPENDENCIES:
+  - DMEThumbnailer (from `~/Desktop/Github/DMEThumbnailer`)
+
+EXTERNAL SOURCES:
+  DMEThumbnailer:
+    :path: ~/Desktop/Github/DMEThumbnailer
+
+SPEC CHECKSUMS:
+  DMEThumbnailer: 29dfbdaef67c961696f115759ea2a9f779bcccb6
+
+COCOAPODS: 0.33.1

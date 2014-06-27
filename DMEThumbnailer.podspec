@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'DMEThumbnailer'
-  s.version  = '1.1'
+  s.version  = '1.3'
   s.license  = 'BSD' 
   s.summary  = 'DMEThumbnailer is a class to generate thumbnails for local images, videos and PDFs'
   s.homepage = 'https://github.com/damarte/DMEThumbnailer'
@@ -8,9 +8,9 @@ Pod::Spec.new do |s|
   s.frameworks = 'AVFoundation'
   s.source   = {
     :git => 'https://github.com/damarte/DMEThumbnailer.git',
-    :tag => '1.1'
+    :tag => '1.3'
   }
   s.requires_arc = true
   s.platform = :ios, '6.0'
-  s.source_files = 'DMEThumbnailer/*.{h,m}'
+  s.source_files = 'Classes/ios/*.{h,m}'
 end
