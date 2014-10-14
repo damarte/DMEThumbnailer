@@ -26,7 +26,9 @@
             if(afterBlock){
                 afterBlock(thumb);
             }
-            [thumbs setObject:*thumb forKey:prefix];
+            if(thumb){
+                [thumbs setObject:*thumb forKey:prefix];
+            }
         }];
     }
     
@@ -50,7 +52,9 @@
             if(afterBlock){
                 afterBlock(thumb);
             }
-            [thumbs setObject:*thumb forKey:prefix];
+            if(thumb){
+                [thumbs setObject:*thumb forKey:prefix];
+            }
             
             // Leave the group as soon as the request succeeded
             dispatch_group_leave(group);
@@ -74,7 +78,9 @@
             if(afterBlock){
                 afterBlock(thumb);
             }
-            [thumbs setObject:*thumb forKey:prefix];
+            if(thumb){
+                [thumbs setObject:*thumb forKey:prefix];
+            }
         }];
     }
     
