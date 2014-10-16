@@ -210,38 +210,43 @@
             aSize = [self adjustSizeRetina:aSize];
             
             //Ruta al pdf
-            CGPDFDocumentRef pdf = CGPDFDocumentCreateWithURL((__bridge CFURLRef)[NSURL fileURLWithPath:aPath]);
+            @try{
+                CGPDFDocumentRef pdf = CGPDFDocumentCreateWithURL((__bridge CFURLRef)[NSURL fileURLWithPath:aPath]);
+                
+                CGPDFPageRef page = CGPDFDocumentGetPage(pdf, aPage);
+                CGRect aRect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
+                UIGraphicsBeginImageContext(aRect.size);
+                CGContextRef context = UIGraphicsGetCurrentContext();
+                
+                CGContextSaveGState(context);
+                CGContextTranslateCTM(context, 0.0, aRect.size.height);
+                CGContextScaleCTM(context, 1.0, -1.0);
+                CGContextTranslateCTM(context, -(aRect.origin.x), -(aRect.origin.y));
+                
+                CGContextSetGrayFillColor(context, 1.0, 1.0);
+                CGContextFillRect(context, aRect);
+                
+                CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(page, kCGPDFCropBox, aRect, 0, false);
+                CGContextConcatCTM(context, pdfTransform);
+                CGContextDrawPDFPage(context, page);
+                
+                thumbnail = UIGraphicsGetImageFromCurrentImageContext();
+                CGContextRestoreGState(context);
+                UIGraphicsEndImageContext();
+                CGPDFDocumentRelease(pdf);
+                
+                thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
+                
+                //Guardamos el thumb
+                [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
+            }
+            @catch(NSException * e){
+                thumbnail = nil;
+            }
             
-            CGPDFPageRef page = CGPDFDocumentGetPage(pdf, aPage);
-            CGRect aRect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
-            UIGraphicsBeginImageContext(aRect.size);
-            CGContextRef context = UIGraphicsGetCurrentContext();
-            
-            CGContextSaveGState(context);
-            CGContextTranslateCTM(context, 0.0, aRect.size.height);
-            CGContextScaleCTM(context, 1.0, -1.0);
-            CGContextTranslateCTM(context, -(aRect.origin.x), -(aRect.origin.y));
-            
-            CGContextSetGrayFillColor(context, 1.0, 1.0);
-            CGContextFillRect(context, aRect);
-            
-            CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(page, kCGPDFCropBox, aRect, 0, false);
-            CGContextConcatCTM(context, pdfTransform);
-            CGContextDrawPDFPage(context, page);
-            
-            thumbnail = UIGraphicsGetImageFromCurrentImageContext();
-            CGContextRestoreGState(context);
-            UIGraphicsEndImageContext();
-            CGPDFDocumentRelease(pdf);
-            
-            thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
-            
-            if(block){
+            if(block && thumbnail){
                 block(&thumbnail);
             }
-
-            //Guardamos el thumb
-            [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
         }
     }
 }
