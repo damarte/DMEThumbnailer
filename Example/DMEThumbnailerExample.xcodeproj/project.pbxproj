@@ -68,6 +68,8 @@
 		27BB831E18ACC86E0026BE38 /* DMEVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMEVideoViewController.m; sourceTree = "<group>"; };
 		27BB832018ACCC710026BE38 /* DMEPDFViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMEPDFViewController.h; sourceTree = "<group>"; };
 		27BB832118ACCC710026BE38 /* DMEPDFViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMEPDFViewController.m; sourceTree = "<group>"; };
+		27D6E8711AC9410300E4BD5F /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		27D6E8731AC9414000E4BD5F /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		516D5A6F0A8B4B5DBF71B39E /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F31DA74F76E74889B0BF2EA9 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -121,6 +123,8 @@
 		27BB82D918ACBEAF0026BE38 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				27D6E8731AC9414000E4BD5F /* CoreMedia.framework */,
+				27D6E8711AC9410300E4BD5F /* MediaPlayer.framework */,
 				27BB831218ACBEE20026BE38 /* AVFoundation.framework */,
 				27BB82DA18ACBEAF0026BE38 /* Foundation.framework */,
 				27BB82DC18ACBEAF0026BE38 /* CoreGraphics.framework */,

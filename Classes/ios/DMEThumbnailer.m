@@ -140,7 +140,7 @@
         }
         else{
             aSize = [self adjustSizeRetina:aSize];
-            
+
             AVURLAsset *asset=[[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:aPath] options:nil];
             [asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"duration"] completionHandler: ^{
                 NSError *error = nil;
@@ -157,7 +157,7 @@
                 }
                 
                 AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-                generator.appliesPreferredTrackTransform=TRUE;
+                generator.appliesPreferredTrackTransform = YES;
                 
                 CGFloat max;
                 if(aSize.width > aSize.height){
@@ -167,18 +167,18 @@
                     max = aSize.height;
                 }
                 CGSize maxSize = CGSizeMake(max, max);
-                generator.maximumSize = maxSize;
-                [generator generateCGImagesAsynchronouslyForTimes:[NSArray arrayWithObject:[NSValue valueWithCMTime:thumbTime]] completionHandler:^(CMTime requestedTime, CGImageRef image, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error) {
-                    UIImage *thumbnail = [UIImage imageWithCGImage:image];
-                    
-                    thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
-                    
-                    if(block){
-                        block(&thumbnail);
-                    }
-                    
-                    [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
-                }];
+                [generator setMaximumSize:maxSize];
+                
+                CGImageRef oneRef = [generator copyCGImageAtTime:thumbTime actualTime:NULL error:&error];
+                UIImage *thumbnail = [[UIImage alloc] initWithCGImage:oneRef];
+                
+                thumbnail = [self imageByScalingAndCropping:thumbnail forSize:aSize];
+                
+                if(block){
+                    block(&thumbnail);
+                }
+                
+                [self saveThumb:thumbnail inPath:aPath withPrefix:aPrefix];
             }];
         }
     }
