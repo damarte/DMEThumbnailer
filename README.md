@@ -5,7 +5,7 @@ DMEThumbnailer is a thumbnail generator for images, MP4 videos and PDF Documents
 
 ##Instalation
 
-Cocoapods, by podfile
+CocoaPods, by podfile
 
 ```
 platform :ios, '6.0'
